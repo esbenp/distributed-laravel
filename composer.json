@@ -1,5 +1,5 @@
 {
-    "name": "optimus/laravel-boilerplate",
+    "name": "optimus/distributed-laravel",
     "autoload": {
         "psr-4": {
             "Optimus\\Api\\System\\": "src/"
