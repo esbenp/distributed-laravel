@@ -20,18 +20,27 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot($router);
     }
 
+    /**
+     * Register
+     */
     public function register()
     {
         $this->registerAssets();
     }
 
+    /**
+     * Register assets
+     */
     private function registerAssets()
     {
         $this->publishes([
-            __DIR__.'/../config/optimus.components.php' => config_path('optimus.components.php')
+            __DIR__.'/config/optimus.components.php' => config_path('optimus.components.php'),
         ]);
     }
 
+    /**
+     * Load configuration
+     */
     private function loadConfig()
     {
         if ($this->app['config']->get('optimus.components') === null) {
