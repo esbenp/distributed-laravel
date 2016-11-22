@@ -9,3 +9,11 @@ Some service providers to enable a Laravel project structure that is grouped by 
 ```bash
 composer require optimus/distributed-laravel 0.1.*
 ```
+
+### Laravel 5.2
+
+`Optimus\Api\System\Laravel52RouteServiceProvider`
+
+### Laravel 5.3
+
+`Optimus\Api\System\Laravel53RouteServiceProvider`
