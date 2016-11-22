@@ -1,25 +1,13 @@
 <?php
 
-namespace Optimus\Api\System;
+namespace Optimus\Api\System\Providers;
 
 use Illuminate\Routing\Router;
 use Optimus\Api\System\Options\Config;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
-class RouteServiceProvider extends ServiceProvider
+abstract class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->loadConfig();
-
-        parent::boot();
-    }
-
     /**
      * Register
      */
@@ -31,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Register assets
      */
-    private function registerAssets()
+    protected function registerAssets()
     {
         $this->publishes([
             __DIR__ . '/config/optimus.components.php' => config_path('optimus.components.php'),
@@ -41,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Load configuration
      */
-    private function loadConfig()
+    protected function loadConfig()
     {
         /** @var \Illuminate\Config\Repository $config */
         $config = $this->app['config'];
