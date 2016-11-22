@@ -5,6 +5,10 @@ return [
 
     ],
 
+    'middleware' => [
+
+    ],
+
     'protection_middleware' => [
 
     ],
