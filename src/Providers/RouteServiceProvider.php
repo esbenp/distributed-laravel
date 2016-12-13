@@ -1,25 +1,13 @@
 <?php
 
-namespace Optimus\Api\System;
+namespace Optimus\Api\System\Providers;
 
 use Illuminate\Routing\Router;
+use Optimus\Api\System\Options\Config;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
-class RouteServiceProvider extends ServiceProvider
+abstract class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function boot()
-    {
-        $this->loadConfig();
-
-        parent::boot();
-    }
-
     /**
      * Register
      */
@@ -31,41 +19,42 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Register assets
      */
-    private function registerAssets()
+    protected function registerAssets()
     {
         $this->publishes([
-            __DIR__ . '/config/optimus.components.php' => config_path('optimus.components.php'),
+            __DIR__ . '/../config/optimus.components.php' => config_path('optimus.components.php'),
         ]);
     }
 
     /**
      * Load configuration
      */
-    private function loadConfig()
+    protected function loadConfig()
     {
         /** @var \Illuminate\Config\Repository $config */
         $config = $this->app['config'];
 
-        if ($config->get('optimus.components') === null) {
-            $config->set('optimus.components', require __DIR__ . '/config/optimus.components.php');
+        if ($config->get('optimus.components') !== null) {
+            return;
         }
-    }
 
+        $config->set('optimus.components', require __DIR__ . '/../config/optimus.components.php');
+    }
     /**
      * Define the routes for the application.
      *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * @param Router $router
      */
     public function map(Router $router)
     {
-        $config = $this->app['config']['optimus.components'];
+        $config = $this->getConfig();
 
-        $middleware = $config['protection_middleware'];
+        $middleware = $config->get('middleware');
+        $protectionMiddleware = $config->get('protection_middleware');
 
         $highLevelParts = array_map(function ($namespace) {
             return glob(sprintf('%s%s*', $namespace, DIRECTORY_SEPARATOR), GLOB_ONLYDIR);
-        }, $config['namespaces']);
+        }, $config->get('namespaces'));
 
         foreach ($highLevelParts as $part => $partComponents) {
             foreach ($partComponents as $componentRoot) {
@@ -91,7 +80,7 @@ class RouteServiceProvider extends ServiceProvider
                     }
 
                     $router->group([
-                        'middleware' => $protected ? $middleware : [],
+                        'middleware' => $protected ? $protectionMiddleware : $middleware,
                         'namespace'  => $namespace,
                     ], function ($router) use ($path) {
                         require $path;
@@ -99,5 +88,15 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
         }
+    }
+
+    /**
+     * Module configuration
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return new Config($this->app['config']['optimus.components']);
     }
 }
