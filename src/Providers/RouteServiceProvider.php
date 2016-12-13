@@ -22,7 +22,7 @@ abstract class RouteServiceProvider extends ServiceProvider
     protected function registerAssets()
     {
         $this->publishes([
-            __DIR__ . '/config/optimus.components.php' => config_path('optimus.components.php'),
+            __DIR__ . '/../config/optimus.components.php' => config_path('optimus.components.php'),
         ]);
     }
 
@@ -38,7 +38,7 @@ abstract class RouteServiceProvider extends ServiceProvider
             return;
         }
 
-        $config->set('optimus.components', require __DIR__ . '/config/optimus.components.php');
+        $config->set('optimus.components', require __DIR__ . '/../config/optimus.components.php');
     }
     /**
      * Define the routes for the application.
