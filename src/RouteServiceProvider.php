@@ -81,6 +81,8 @@ class RouteServiceProvider extends ServiceProvider
                     'routes' => true,
                     'routes_protected' => true,
                     'routes_public' => false,
+                    'web' => false,
+                    'api' => true,
                 ];
 
                 foreach ($fileNames as $fileName => $protected) {
