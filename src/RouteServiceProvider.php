@@ -69,7 +69,7 @@ class RouteServiceProvider extends ServiceProvider
 
         foreach ($highLevelParts as $part => $partComponents) {
             foreach ($partComponents as $componentRoot) {
-                $component = substr($componentRoot, strrpos($componentRoot, '/') + 1);
+                $component = substr($componentRoot, strrpos($componentRoot, DIRECTORY_SEPARATOR) + 1);
 
                 $namespace = sprintf(
                     '%s\\%s\\Controllers',
