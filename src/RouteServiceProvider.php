@@ -91,13 +91,28 @@ class RouteServiceProvider extends ServiceProvider
                     if (!file_exists($path)) {
                         continue;
                     }
-
-                    $router->group([
-                        'middleware' => $protected ? $middleware : [],
-                        'namespace'  => $namespace,
-                    ], function ($router) use ($path) {
-                        require $path;
-                    });
+                    if ($fileName === 'web'){
+                        $router->group([
+                            'middleware' => ['web'],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    } else if ($fileName === 'api'){
+                        $router->group([
+                            'middleware' => ['api'],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    } else {
+                        $router->group([
+                            'middleware' => $protected ? $middleware : [],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    }
                 }
             }
         }
