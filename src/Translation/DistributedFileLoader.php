@@ -39,4 +39,14 @@ class DistributedFileLoader extends FileLoader
 
         return $result;
     }
+
+    protected function loadJsonPath($path, $locale)
+    {
+        // supposedly this method wont be called in laravel versions previous to 5.4
+        $result = [];
+        foreach ($this->paths as $path) {
+            $result = array_merge($result, parent::loadJsonPath($path, $locale));
+        }
+        return $result;
+    }
 }

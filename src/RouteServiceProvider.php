@@ -69,7 +69,7 @@ class RouteServiceProvider extends ServiceProvider
 
         foreach ($highLevelParts as $part => $partComponents) {
             foreach ($partComponents as $componentRoot) {
-                $component = substr($componentRoot, strrpos($componentRoot, '/') + 1);
+                $component = substr($componentRoot, strrpos($componentRoot, DIRECTORY_SEPARATOR) + 1);
 
                 $namespace = sprintf(
                     '%s\\%s\\Controllers',
@@ -81,6 +81,8 @@ class RouteServiceProvider extends ServiceProvider
                     'routes' => true,
                     'routes_protected' => true,
                     'routes_public' => false,
+                    'web' => false,
+                    'api' => true,
                 ];
 
                 foreach ($fileNames as $fileName => $protected) {
@@ -89,13 +91,28 @@ class RouteServiceProvider extends ServiceProvider
                     if (!file_exists($path)) {
                         continue;
                     }
-
-                    $router->group([
-                        'middleware' => $protected ? $middleware : [],
-                        'namespace'  => $namespace,
-                    ], function ($router) use ($path) {
-                        require $path;
-                    });
+                    if ($fileName === 'web'){
+                        $router->group([
+                            'middleware' => ['web'],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    } else if ($fileName === 'api'){
+                        $router->group([
+                            'middleware' => ['api'],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    } else {
+                        $router->group([
+                            'middleware' => $protected ? $middleware : [],
+                            'namespace'  => $namespace,
+                        ], function ($router) use ($path) {
+                            require $path;
+                        });
+                    }
                 }
             }
         }
