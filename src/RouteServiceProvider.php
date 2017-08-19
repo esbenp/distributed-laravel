@@ -97,6 +97,20 @@ class RouteServiceProvider extends ServiceProvider
                         require $path;
                     });
                 }
+
+                // check if we should not register the service providers in this namespace
+                if (!in_array($part, $config['register_service_provider_namespaces'])) {
+                    continue;
+                }
+
+                // check if service provider exists
+                $spPath = sprintf('%s/%sServiceProvider.php', $componentRoot, str_singular($component));
+                if (!file_exists($spPath)) {
+                    continue;
+                }
+
+                $spName = sprintf('%s\\%s\\%sServiceProvider', $part, $component, str_singular($component));
+                $this->app->register($spName);
             }
         }
     }
