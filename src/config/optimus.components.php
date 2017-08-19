@@ -5,6 +5,10 @@ return [
 
     ],
 
+    'register_service_provider_namespaces' => [
+
+    ],
+
     'protection_middleware' => [
 
     ],
