@@ -1,6 +1,9 @@
 <?php
 
 return [
+
+    'prefix' => '',
+
     'namespaces' => [
 
     ],
