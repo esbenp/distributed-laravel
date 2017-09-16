@@ -62,6 +62,7 @@ class RouteServiceProvider extends ServiceProvider
         $config = $this->app['config']['optimus.components'];
 
         $middleware = $config['protection_middleware'];
+        $prefix = $config['prefix'];
 
         $highLevelParts = array_map(function ($namespace) {
             return glob(sprintf('%s%s*', $namespace, DIRECTORY_SEPARATOR), GLOB_ONLYDIR);
@@ -93,6 +94,7 @@ class RouteServiceProvider extends ServiceProvider
                     $router->group([
                         'middleware' => $protected ? $middleware : [],
                         'namespace'  => $namespace,
+                        'prefix' => $prefix
                     ], function ($router) use ($path) {
                         require $path;
                     });
