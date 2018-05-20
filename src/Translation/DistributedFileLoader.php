@@ -32,9 +32,35 @@ class DistributedFileLoader extends FileLoader
      */
     protected function loadPath($path, $locale, $group)
     {
+        if (null !== $path) {
+            return parent::loadPath($path, $locale, $group);
+        }
+
         $result = [];
         foreach ($this->paths as $path) {
             $result = array_merge($result, parent::loadPath($path, $locale, $group));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Load a locale from a given path.
+     *
+     * @param  string  $path
+     * @param  string  $locale
+     * @param  string  $group
+     * @return array
+     */
+    protected function loadJsonPath($path, $locale)
+    {
+        if (null !== $path) {
+            return parent::loadJsonPath($path, $locale);
+        }
+
+        $result = [];
+        foreach ($this->paths as $path) {
+            $result = array_merge($result, parent::loadJsonPath($path, $locale));
         }
 
         return $result;
