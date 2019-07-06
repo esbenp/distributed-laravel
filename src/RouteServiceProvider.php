@@ -61,19 +61,37 @@ class RouteServiceProvider extends ServiceProvider
     {
         $config = $this->app['config']['optimus.components'];
 
-        $middleware = $config['protection_middleware'];
+        $protectionMiddleware = $config['protection_middleware'];
 
         $highLevelParts = array_map(function ($namespace) {
-            return glob(sprintf('%s%s*', $namespace, DIRECTORY_SEPARATOR), GLOB_ONLYDIR);
+            if (! is_array($namespace)) {
+                $namespace = [
+                    'path' => $namespace,
+                    'route' => []
+                ];
+            }
+
+            if (! array_key_exists('route', $namespace)) {
+                $namespace['route'] = [];
+            }
+
+            if (! array_key_exists('middleware', $namespace['route'])) {
+                $namespace['route']['middleware'] = [];
+            }
+
+            return [
+                'components' => glob(sprintf('%s%s*', $namespace['path'], DIRECTORY_SEPARATOR), GLOB_ONLYDIR),
+                'route'      => $namespace['route'],
+            ];
         }, $config['namespaces']);
 
-        foreach ($highLevelParts as $part => $partComponents) {
-            foreach ($partComponents as $componentRoot) {
+        foreach ($highLevelParts as $highPart => $part) {
+            foreach ($part['components'] as $componentRoot) {
                 $component = substr($componentRoot, strrpos($componentRoot, DIRECTORY_SEPARATOR) + 1);
 
                 $namespace = sprintf(
                     '%s\\%s\\Controllers',
-                    $part,
+                    $highPart,
                     $component
                 );
 
@@ -90,10 +108,17 @@ class RouteServiceProvider extends ServiceProvider
                         continue;
                     }
 
-                    $router->group([
-                        'middleware' => $protected ? $middleware : [],
+                    $middleware = $part['route']['middleware'];
+                    if ($protected) {
+                        $middleware = array_merge($protectionMiddleware, $middleware);
+                    }
+
+                    $group = array_merge($part['route'], [
                         'namespace'  => $namespace,
-                    ], function ($router) use ($path) {
+                        'middleware' => $middleware,
+                    ]);
+
+                    $router->group($group, function ($router) use ($path) {
                         require $path;
                     });
                 }
