@@ -26,6 +26,10 @@ class RouteServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerAssets();
+
+        $this->booted(function () {
+            $this->loadRoutes();
+        });
     }
 
     /**
