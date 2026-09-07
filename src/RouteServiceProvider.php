@@ -22,9 +22,15 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Register
+     *
+     * The parent registers the callback that loads the application's routes:
+     * either the compiled route cache or, when there is none, a call to map().
+     * Without it neither branch ever runs and a route cache on disk is ignored.
      */
     public function register()
     {
+        parent::register();
+
         $this->registerAssets();
     }
 
